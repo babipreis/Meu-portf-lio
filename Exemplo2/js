@@ -1,0 +1,96 @@
+// Classe base Funcionario
+class Funcionario {
+    constructor(nome, idade, cargo) {
+        this.nome = nome;
+        this.idade = idade;
+        this.cargo = cargo;
+    }
+
+    seApresentar() {
+        return `Olá, meu nome é ${this.nome}, tenho ${this.idade} anos e sou ${this.cargo}.`;
+    }
+
+    trabalhar() {
+        return `${this.nome} está trabalhando.`;
+    }
+}
+
+// Classe Gerente, herda de Funcionario
+class Gerente extends Funcionario {
+    constructor(nome, idade, departamento) {
+        super(nome, idade, "Gerente");
+        this.departamento = departamento;
+    }
+
+    gerenciar() {
+        return `${this.nome} está gerenciando o departamento de ${this.departamento}.`;
+    }
+}
+
+// Classe Desenvolvedor, herda de Funcionario
+class Desenvolvedor extends Funcionario {
+    constructor(nome, idade, linguagem) {
+        super(nome, idade, "Desenvolvedor");
+        this.linguagem = linguagem;
+    }
+
+    programar() {
+        return `${this.nome} está programando em ${this.linguagem}.`;
+    }
+}
+
+// Função para exibir erro na página
+function exibirErro(mensagem) {
+    const erroDiv = document.getElementById('erro');
+    erroDiv.textContent = mensagem;
+    erroDiv.style.color = 'red';
+}
+
+// Função para criar instâncias de funcionário a partir do formulário
+function criarFuncionario() {
+    try {
+        // Obtém os valores dos campos do formulário
+        const nome = document.getElementById('nome').value;
+        const idade = parseInt(document.getElementById('idade').value);
+        const cargo = document.getElementById('cargo').value;
+        const departamento = document.getElementById('departamento').value;
+        const linguagem = document.getElementById('linguagem').value;
+
+        // Valida se os campos obrigatórios estão preenchidos
+        if (!nome || !idade || !cargo) {
+            throw new Error("Por favor, preencha todos os campos obrigatórios.");
+        }
+
+        let funcionario;
+
+        // Cria a instância com base no cargo selecionado
+        if (cargo === "Gerente") {
+            if (!departamento) throw new Error("O campo Departamento é obrigatório para Gerentes.");
+            funcionario = new Gerente(nome, idade, departamento);
+        } else if (cargo === "Desenvolvedor") {
+            if (!linguagem) throw new Error("O campo Linguagem é obrigatório para Desenvolvedores.");
+            funcionario = new Desenvolvedor(nome, idade, linguagem);
+        }
+
+        // Exibe a apresentação e a tarefa do funcionário na página
+        document.getElementById('resultado').textContent = `${funcionario.seApresentar()} ${funcionario.trabalhar()}`;
+
+        // Exibe a função específica (gerenciar ou programar)
+        if (funcionario instanceof Gerente) {
+            document.getElementById('resultado').textContent += ` ${funcionario.gerenciar()}`;
+        } else if (funcionario instanceof Desenvolvedor) {
+            document.getElementById('resultado').textContent += ` ${funcionario.programar()}`;
+        }
+
+    } catch (erro) {
+        // Trata os erros lançados e exibe na página
+        exibirErro(erro.message);
+    }
+}
+
+// Interação com o botão de submissão
+document.getElementById('formFuncionario').addEventListener('submit', function (event) {
+    event.preventDefault(); // Impede o envio padrão do formulário
+    criarFuncionario(); // Chama a função para criar o funcionário
+});
+
